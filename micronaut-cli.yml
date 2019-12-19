@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: file.upload
+---
+testFramework: junit
+sourceLanguage: java
