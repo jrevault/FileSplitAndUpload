@@ -20,3 +20,5 @@ gradle-app.setting
 .project
 .settings
 .classpath
+
+application.yml
