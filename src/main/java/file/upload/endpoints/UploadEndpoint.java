@@ -11,12 +11,16 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.StreamingFileUpload;
 import io.reactivex.Single;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
 
 @Controller( "/upload" )
 public class UploadEndpoint {
+
+  private static Logger log = LoggerFactory.getLogger(UploadEndpoint.class);
 
   private MyProperties properties;
   private FileServices file_services;
@@ -31,13 +35,13 @@ public class UploadEndpoint {
 
   @Post( "/stream" )
   @Consumes( MediaType.MULTIPART_FORM_DATA )
-  public Single<HttpResponse<String>> stream( StreamingFileUpload file ) {
+  public Single<HttpResponse<String>> stream( StreamingFileUpload upload_file ) {
 
     long start = System.currentTimeMillis( );
 
-    File final_file = properties.getDestination( file.getFilename( ) ).toFile( );
+    File final_file = properties.getDestination( upload_file.getFilename( ) ).toFile( );
 
-    Publisher<Boolean> uploadPublisher = file.transferTo( final_file );
+    Publisher<Boolean> uploadPublisher = upload_file.transferTo( final_file );
     return Single.fromPublisher( uploadPublisher )
         .map( success -> {
           if ( !success ) {
@@ -45,7 +49,7 @@ public class UploadEndpoint {
           }
           else {
             float duration = ( System.currentTimeMillis( ) - start ) / 1000;
-            float size = final_file.length( ) / 1000;
+            float size = final_file.length( ) / 1024 / 1024;
             float throughput = size / duration;
 
             System.out.println( "Full size  : " + size + " mb" );

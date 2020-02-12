@@ -4,11 +4,15 @@ import file.upload.repository.MessageProducer;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 @Controller( "/tests" )
 public class TestsEndpoint {
+
+  private static Logger log = LoggerFactory.getLogger(TestsEndpoint.class);
 
   @Inject
   private MessageProducer message_producer;
