@@ -1,8 +1,6 @@
 package file.upload.repository;
 
 import io.micronaut.configuration.kafka.annotation.KafkaKey;
-import io.micronaut.configuration.kafka.annotation.KafkaListener;
-import io.micronaut.configuration.kafka.annotation.OffsetReset;
 import io.micronaut.configuration.kafka.annotation.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.time.Duration;
 
-@KafkaListener( offsetReset = OffsetReset.EARLIEST )
+//@KafkaListener( offsetReset = OffsetReset.EARLIEST )
 public class MessageListener {
 
   private final static Logger logger = LoggerFactory.getLogger( MessageListener.class );
