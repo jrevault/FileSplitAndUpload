@@ -29,7 +29,7 @@ public class UploadEndpoint extends CommonEndpoint {
     this.spark = spark;
     String path = basePath + CONTEXT_PATH;
 
-    spark.post( path + "/1" , this::upload_1 );
+    spark.post( path + "/" , this::upload_1 );
 
   }
 
@@ -37,7 +37,7 @@ public class UploadEndpoint extends CommonEndpoint {
 
     long start = System.currentTimeMillis( );
 
-    String filename = "/Users/julienrevaultdallonnes/Downloads/TEMP/" + System.currentTimeMillis( ) + ".tmp";
+    String filename = "D:/DEV/GO/src/data/TEMP2/" + System.currentTimeMillis( ) + ".tmp";
     final Path path = Paths.get( filename );
 
     req.attribute( "org.eclipse.jetty.multipartConfig" , new MultipartConfigElement( "/temp" ) );

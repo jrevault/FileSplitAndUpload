@@ -13,7 +13,7 @@ public class SendFiles {
   private static Logger log = LoggerFactory.getLogger( SendFiles.class );
 
   public static void main( String[] args ) throws Exception {
-    String baseName = "5G.7z";
+    String baseName = "700M.7z";
     String source = "D:/DEV/GO/src/data/" + baseName;
     String target = "D:/DEV/GO/src/data/TEMP/" + baseName;
     String url = "http://localhost:8080/upload";
