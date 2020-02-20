@@ -26,13 +26,16 @@ dependencies {
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.sparkjava:spark-core:2.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
+    implementation 'commons-io:commons-io:2.6'
     implementation 'io.micronaut.configuration:micronaut-kafka'
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut:micronaut-runtime"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "io.micronaut:micronaut-http-client"
-
 
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
 
@@ -48,7 +51,7 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "file.upload.Application"
+mainClassName = "file.upload.micronaut.Application"
 
 // use JUnit 5 platform
 test {

@@ -1,4 +1,4 @@
-package file.upload;
+package file.upload.micronaut;
 
 import io.micronaut.runtime.Micronaut;
 

@@ -23,7 +23,8 @@ services:
     - '9092:9092'
     environment:
     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-    - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.12:9092
+    - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.13:9092
+    #    - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.220.104:9092
     - ALLOW_PLAINTEXT_LISTENER=yes
 
     depends_on:
@@ -34,7 +35,7 @@ services:
 #    networks:
 #      - kafka-net
 #    ports:
-#      - '9093:9092'
+#      - '19093:9092'
 #    environment:
 #      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
 #      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.12:9093

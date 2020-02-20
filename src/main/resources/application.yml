@@ -1,10 +1,17 @@
 micronaut:
+  env: dev
   application:
     name: file-upload
+  server:
+    port: 8080
+    max-request-size: 100GB
+    multipart:
+      max-file-size: '100GB'
+    log-handled-exceptions: true
 
+#kafka:
+#  bootstrap:
+#    servers: 192.168.0.12:9092
 
-
-kafka:
-  bootstrap:
-    servers: 192.168.0.12:9092
-
+my:
+  destination: D:/DEV/TEMP
