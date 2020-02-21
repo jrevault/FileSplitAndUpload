@@ -1,67 +1,29 @@
 package file.upload.client;
 
-import okhttp3.*;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.ListenableFuture;
-import org.asynchttpclient.handler.TransferCompletionHandler;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.nio.channels.FileChannel;
 import java.util.Map;
-import java.util.concurrent.Future;
 
-import static org.asynchttpclient.Dsl.asyncHttpClient;
+public class SendFilesAsync {
 
-public class SendFiles {
-
-  private static Logger log = LoggerFactory.getLogger( SendFiles.class );
+  private static Logger log = LoggerFactory.getLogger( SendFilesAsync.class );
 
   public static void main( String[] args ) throws Exception {
-
-  }
-  public void t0 () throws Exception {
-    String location = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/";
-    String fileName = "001.fastq.gz";
-    String url = "http://localhost:8080/upload";
-
-    SendFiles sf = new SendFiles( );
-
-    int chunkSize = 300 * 1_048_576;
-
-    final File sourceFile = new File(location + fileName);
-    final FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
-
-    long chunks = SplitChunk.getNumberOfChunks(sourceChannel, chunkSize);
-    float totalSizeInMB = chunkSize * chunks / 1_048_576;
-
-    long start = System.currentTimeMillis( );
-    for (int i = 1; i <= chunks; i++) {
-      File targetFile = new File(location + fileName + "." + i);
-      SplitChunk.go(sourceFile , targetFile , i, chunkSize );
-      sf.go(url, targetFile, i);
-    }
-    float duration = ( System.currentTimeMillis( ) - start ) / 1000;
-    float throughput = totalSizeInMB / duration;
-
-    log.info( "****************" );
-    log.info( "{} files of {} MB splitted in {} s at {} MB/s  : " , chunks , totalSizeInMB , duration , throughput );
-    log.info( "****************" );
-
- }
-  public static void t1 () throws Exception {
     String baseName = "700M.7z";
     String source = "D:/DEV/GO/src/data/" + baseName;
     String target = "D:/DEV/GO/src/data/TEMP/" + baseName;
     String url = "http://localhost:8080/upload";
 
-    SendFiles sf = new SendFiles( );
+    SendFilesAsync sf = new SendFilesAsync( );
 
     int chunkSizeInMb = 300;
     long start = System.currentTimeMillis( );
