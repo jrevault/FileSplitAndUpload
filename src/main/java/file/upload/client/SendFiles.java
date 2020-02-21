@@ -24,28 +24,27 @@ public class SendFiles {
   private static Logger log = LoggerFactory.getLogger( SendFiles.class );
 
   public static void main( String[] args ) throws Exception {
-
+    SendFiles sf = new SendFiles( );
+    sf.t0();
   }
   public void t0 () throws Exception {
     String location = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/";
     String fileName = "001.fastq.gz";
     String url = "http://localhost:8080/upload";
 
-    SendFiles sf = new SendFiles( );
 
     int chunkSize = 300 * 1_048_576;
 
     final File sourceFile = new File(location + fileName);
-    final FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
 
-    long chunks = SplitChunk.getNumberOfChunks(sourceChannel, chunkSize);
+    long chunks = SplitChunk.getNumberOfChunks(sourceFile, chunkSize);
     float totalSizeInMB = chunkSize * chunks / 1_048_576;
 
     long start = System.currentTimeMillis( );
     for (int i = 1; i <= chunks; i++) {
       File targetFile = new File(location + fileName + "." + i);
       SplitChunk.go(sourceFile , targetFile , i, chunkSize );
-      sf.go(url, targetFile, i);
+      //sf.go(url, targetFile, i);
     }
     float duration = ( System.currentTimeMillis( ) - start ) / 1000;
     float throughput = totalSizeInMB / duration;

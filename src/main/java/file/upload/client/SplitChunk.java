@@ -19,68 +19,36 @@ public class SplitChunk {
     private SplitChunk() {
     }
 
-    public static void go(String sourcePath, String targetPath, int chunk, int chunkSizeInMB) throws Exception {
-        go(new FileInputStream(sourcePath).getChannel(), new FileOutputStream(targetPath).getChannel(), chunk, chunkSizeInMB * 1_048_576);
-    }
-
     public static void go(String sourcePath, String targetPath, int chunk, long chunkSizeInBytes) throws Exception {
         go(new FileInputStream(sourcePath).getChannel(), new FileOutputStream(targetPath).getChannel(), chunk, chunkSizeInBytes);
-    }
-
-    public static void go(String sourcePath, File targetFile, int chunk, int chunkSizeInMB) throws Exception {
-        go(new FileInputStream(sourcePath).getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInMB * 1_048_576);
     }
 
     public static void go(String sourcePath, File targetFile, int chunk, long chunkSizeInBytes) throws Exception {
         go(new FileInputStream(sourcePath).getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInBytes);
     }
 
-    public static void go(File sourceFile, String targetPath, int chunk, int chunkSizeInMB) throws Exception {
-        go(new FileInputStream(sourceFile).getChannel(), new FileOutputStream(targetPath).getChannel(), chunk, chunkSizeInMB * 1_048_576);
-    }
-
     public static void go(File sourceFile, String targetPath, int chunk, long chunkSizeInBytes) throws Exception {
         go(new FileInputStream(sourceFile).getChannel(), new FileOutputStream(targetPath).getChannel(), chunk, chunkSizeInBytes);
-    }
-
-    public static void go(File sourceFile, File targetFile, int chunk, int chunkSizeInMB) throws Exception {
-        go(new FileInputStream(sourceFile).getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInMB * 1_048_576);
     }
 
     public static void go(File sourceFile, File targetFile, int chunk, long chunkSizeInBytes) throws Exception {
         go(new FileInputStream(sourceFile).getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInBytes);
     }
 
-    public static void go(FileInputStream sourceStream, File targetFile, int chunk, int chunkSizeInMB) throws Exception {
-        go(sourceStream.getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInMB * 1_048_576);
-    }
-
     public static void go(FileInputStream sourceStream, File targetFile, int chunk, long chunkSizeInBytes) throws Exception {
         go(sourceStream.getChannel(), new FileOutputStream(targetFile).getChannel(), chunk, chunkSizeInBytes);
-    }
-
-    public static void go(File sourceFile, FileInputStream targetStream, int chunk, int chunkSizeInMB) throws Exception {
-        go(new FileInputStream(sourceFile).getChannel(), targetStream.getChannel(), chunk, chunkSizeInMB * 1_048_576);
     }
 
     public static void go(File sourceFile, FileInputStream targetStream, int chunk, long chunkSizeInBytes) throws Exception {
         go(new FileInputStream(sourceFile).getChannel(), targetStream.getChannel(), chunk, chunkSizeInBytes);
     }
 
-    public static void go(FileInputStream sourceStream, FileOutputStream targetStream, int chunk, int chunkSizeInMB) throws Exception {
-        go(sourceStream.getChannel(), targetStream.getChannel(), chunk, chunkSizeInMB * 1_048_576);
-    }
-
     public static void go(FileInputStream sourceStream, FileOutputStream targetStream, int chunk, long chunkSizeInBytes) throws Exception {
         go(sourceStream.getChannel(), targetStream.getChannel(), chunk, chunkSizeInBytes);
     }
 
-    public static void go(FileChannel sourceChannel, FileChannel targetChannel, int chunk, int chunkSizeInMB) throws Exception {
-        go(sourceChannel, targetChannel, chunk, chunkSizeInMB * 1_048_576);
-    }
-
     public static void go(FileChannel sourceChannel, FileChannel targetChannel, int chunk,  long chunkSizeInBytes) throws Exception {
-        go(sourceChannel, targetChannel, chunk,chunkSizeInBytes );
+        work(sourceChannel, targetChannel, chunk,chunkSizeInBytes );
     }
 
     private static void work(FileChannel sourceChannel, FileChannel targetChannel, int chunk,  long chunkSizeInBytes) throws Exception {
@@ -109,6 +77,10 @@ public class SplitChunk {
 
     public static long getNumberOfChunks(FileChannel sourceChannel, long chunkSizeInBytes) throws IOException {
         return (long) Math.ceil((double) sourceChannel.size() / (double) chunkSizeInBytes);
+    }
+
+    public static long getNumberOfChunks(File sourceFile, long chunkSizeInBytes) throws IOException {
+        return (long) Math.ceil((double) sourceFile.length() / (double) chunkSizeInBytes);
     }
 
 
