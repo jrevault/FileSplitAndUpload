@@ -67,7 +67,7 @@ public class SplitChunk {
         try {
             // Resuming at the end of previous chunk
             sourceChannel.position((chunk - 1) * chunkSizeInBytes);
-            targetChannel.transferFrom(sourceChannel, (chunk - 1) * chunkSizeInBytes, chunkSizeInBytes);
+            targetChannel.transferFrom( sourceChannel , 0 , chunkSizeInBytes );
         } finally {
             closeChannel(targetChannel);
             closeChannel(sourceChannel);

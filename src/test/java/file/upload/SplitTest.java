@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class SplitTest {
 
   @Test
-  void full_9M() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
-    int chunkSizeInMB = 2;
+  void full() {
+    String source = "testdata/2.5G.7z";
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "full.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.all( );
@@ -36,12 +36,12 @@ class SplitTest {
 
   @Test
   void from_last_1() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int chunk = 5;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "from_last_1.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.from( chunk );
@@ -55,12 +55,12 @@ class SplitTest {
 
   @Test
   void from_last_2() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int chunk = 4;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "from_last_2.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.from( chunk );
@@ -74,13 +74,13 @@ class SplitTest {
 
   @Test
   void between_2_and_4() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int startChunk = 2;
     int endChunk = 4;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "between_2_and_4.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.between( startChunk , endChunk );
@@ -94,13 +94,13 @@ class SplitTest {
 
   @Test
   void between_4_and_2() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int startChunk = 4;
     int endChunk = 2;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "between_4_and_2.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.between( startChunk , endChunk );
@@ -115,12 +115,12 @@ class SplitTest {
 
   @Test
   void from_after_last_chunk() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int startChunk = 3333333;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "from_after_last_chunk.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.from( startChunk );
@@ -134,12 +134,12 @@ class SplitTest {
 
   @Test
   void from_before_first_chunk() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
+    String source = "testdata/2.5G.7z";
     int startChunk = -12;
-    int chunkSizeInMB = 2;
+    int chunkSizeInMB = 500;
 //    String target = "/Users/julienrevaultdallonnes/Downloads/TEMP/2G.fastq.split";
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    String outDir = "testdata/TEMP/";
+    String baseName = "from_before_first_chunk.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.from( startChunk );
@@ -154,9 +154,9 @@ class SplitTest {
   @Test
   void source_does_not_exists() {
     String source = "/wrong_path_to_file";
-    int chunkSizeInMB = 2;
-    String outDir = "D:/DEV/GO/src/data/TEMP/";
-    String baseName = "9M.test";
+    int chunkSizeInMB = 500;
+    String outDir = "testdata/TEMP/";
+    String baseName = "source_does_not_exists.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.all( );
@@ -171,10 +171,10 @@ class SplitTest {
 
   @Test
   void destination_folder_does_not_exists() {
-    String source = "D:/DEV/GO/src/data/9M.csv";
-    int chunkSizeInMB = 2;
+    String source = "testdata/2.5G.7z";
+    int chunkSizeInMB = 500;
     String outDir = "/wrong_path_to_folder/";
-    String baseName = "9M.test";
+    String baseName = "destination_folder_does_not_exists.test";
     try {
       Split split = new Split( source , outDir + baseName , chunkSizeInMB );
       split.all( );

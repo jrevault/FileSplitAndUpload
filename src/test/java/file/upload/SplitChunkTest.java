@@ -13,9 +13,9 @@ class SplitChunkTest {
     @Test
     void t_1() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/2M.chunk";
-            int chunkSizeInMB = 2;
+            String source = "testdata/2.5G.7z";
+            String target = "testdata/TEMP/t_1.chunk";
+            int chunkSizeInMB = 500 * 1_048_576;
 
             long start = System.currentTimeMillis();
             SplitChunk.go(source, target, 2, chunkSizeInMB);
@@ -31,9 +31,9 @@ class SplitChunkTest {
     @Test
     void t_2() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/200M.chunk";
-            int chunkSizeInMB = 200;
+            String source = "testdata/2.5G.7z";
+            String target = "testdata/TEMP/t_2.chunk";
+            int chunkSizeInMB = 500 * 1_048_576;
 
             long start = System.currentTimeMillis();
             SplitChunk.go(source, target, 1, chunkSizeInMB);
@@ -48,9 +48,9 @@ class SplitChunkTest {
     @Test
     void t_3() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/160M.chunk";
-            int chunkSizeInMB = 200;
+            String source = "testdata/2.5G.7z";
+            String target = "testdata/TEMP/t_3.chunk";
+            int chunkSizeInMB = 500 * 1_048_576;
 
             long start = System.currentTimeMillis();
             SplitChunk.go(source, target, 2, chunkSizeInMB);
