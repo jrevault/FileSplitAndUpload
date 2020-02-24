@@ -43,7 +43,6 @@ public class UploadEndpoint {
     try {
       File tempFile = properties.getDestination( upload_file.getFilename( ) ).toFile( );
       tempFile.createNewFile( );
-//      File tempFile = File.createTempFile(upload_file.getFilename(), "temp");
 
       Path path = Paths.get( tempFile.getAbsolutePath( ) );
       Files.write( path , upload_file.getBytes( ) );

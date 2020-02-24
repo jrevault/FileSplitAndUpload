@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.time.Duration;
 
-@KafkaListener( offsetReset = OffsetReset.EARLIEST )
+//@KafkaListener( offsetReset = OffsetReset.EARLIEST )
 public class MessageListener {
 
   private final static Logger logger = LoggerFactory.getLogger( MessageListener.class );
@@ -29,7 +29,7 @@ public class MessageListener {
     }
   }
 
-  @Topic( "qq-messages" )
+//  @Topic( "qq-messages" )
   public void receive( @KafkaKey String key , String message ) {
 
     System.out.println( "Got message at " + key + " : " + message );

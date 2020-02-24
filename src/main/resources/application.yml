@@ -3,7 +3,7 @@ micronaut:
   application:
     name: file-upload
   server:
-    port: 8080
+    port: 5050
     max-request-size: 100GB
     multipart:
       max-file-size: '100GB'
@@ -14,4 +14,4 @@ micronaut:
 #    servers: 192.168.0.12:9092
 
 my:
-  destination: D:/DEV/TEMP
+  destination: testdata/TEMP2/
