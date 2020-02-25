@@ -1,5 +1,10 @@
 package file.upload.client;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -37,65 +42,83 @@ public class SendFiles {
 
         SendFiles sf = new SendFiles();
 
-        long startAll = System.currentTimeMillis( );
+        long startAll = System.currentTimeMillis();
 
+//        Observable<File> fileObservable = Observable.create(emitter -> {
+//            try {
+//                for (File file : files) {
+//                    emitter.onNext(file);
+//                }
+//                emitter.onComplete();
+//            } catch (Exception e) {
+//                emitter.onError(e);
+//            }
+//        });
 //        sf.file(files, url, CHUNK_SIZE, "testdata/TEMP/");
 
-        float duration = ( System.currentTimeMillis( ) - startAll ) / 1000;
+        float duration = (System.currentTimeMillis() - startAll) / 1000;
         float throughput = totalSizeInMB / duration;
-        log.info( "****************" );
-        log.info( "{} files of {} MB processed in {} s at {} MB/s : " , files.length , totalSizeInMB , duration , throughput );
-        log.info( "****************" );
+        log.info("****************");
+        log.info("{} files of {} MB processed in {} s at {} MB/s : ", files.length, totalSizeInMB, duration, throughput);
+        log.info("****************");
 
-        startAll = System.currentTimeMillis( );
+        startAll = System.currentTimeMillis();
 
         sf.bytes(files, url, CHUNK_SIZE);
 
-        duration = ( System.currentTimeMillis( ) - startAll ) / 1000;
+        duration = (System.currentTimeMillis() - startAll) / 1000;
         throughput = totalSizeInMB / duration;
-        log.info( "****************" );
-        log.info( "{} files of {} MB processed in {} s at {} MB/s : " , files.length , totalSizeInMB , duration , throughput );
-        log.info( "****************" );
-
+        log.info("****************");
+        log.info("{} files of {} MB processed in {} s at {} MB/s : ", files.length, totalSizeInMB, duration, throughput);
+        log.info("****************");
 
 
     }
 
-    public int file( File[] files, String url, long CHUNK_SIZE, String target_dir) throws Exception {
+    public void file(File[] files, String url, long CHUNK_SIZE, String target_dir) throws Exception {
 
         for (int i = 0; i < files.length; i++) {
-            File sourceFile = files[i];
-            long chunks = (long) Math.ceil((double) sourceFile.length() / (double) CHUNK_SIZE);
-
-            for (AtomicInteger chunk = new AtomicInteger(1); chunk.get() <= chunks; chunk.getAndIncrement()) {
-                File targetFile = new File(target_dir + sourceFile.getName() + "." + chunk.get());
-                FileChannel targetChannel = new FileOutputStream(targetFile).getChannel();
-
-                SplitChunk.go(new FileInputStream(sourceFile).getChannel(), targetChannel, chunk.get(), CHUNK_SIZE);
-                go(url, targetFile, chunk.get(), sourceFile.getName() + ".file." + chunk.get());
-            }
+            file(files[i], url, CHUNK_SIZE, "testdata/TEMP/");
         }
-        return files.length;
     }
 
-    public int bytes( File[] files, String url, long CHUNK_SIZE) throws Exception {
+    public void file(File sourceFile, String url, long CHUNK_SIZE, String target_dir) throws Exception {
 
-        for (int i = 0; i < files.length; i++) {
-            File sourceFile = files[i];
+        long chunks = (long) Math.ceil((double) sourceFile.length() / (double) CHUNK_SIZE);
 
-            FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
-            long chunks = (long) Math.ceil((double) sourceChannel.size() / (double) CHUNK_SIZE);
-            ByteBuffer buffer = ByteBuffer.allocate(Math.toIntExact(CHUNK_SIZE));
+        for (AtomicInteger chunk = new AtomicInteger(1); chunk.get() <= chunks; chunk.getAndIncrement()) {
+            File targetFile = new File(target_dir + sourceFile.getName() + "." + chunk.get());
+            FileChannel targetChannel = new FileOutputStream(targetFile).getChannel();
 
-            for (AtomicLong chunk = new AtomicLong(1); chunk.get() <= chunks; chunk.getAndIncrement()) {
-                buffer.clear();
-                long position = (chunk.get() - 1) * CHUNK_SIZE;
-                byte[] chunkBuffer = getBytes(sourceChannel, buffer, position);
-                go(url, chunkBuffer, chunk.get(), sourceFile.getName() + ".bytes." + chunk.get());
-            }
-            sourceChannel.close();
+            SplitChunk.go(new FileInputStream(sourceFile).getChannel(), targetChannel, chunk.get(), CHUNK_SIZE);
+            go(url, targetFile, chunk.get(), sourceFile.getName() + ".file." + chunk.get());
         }
-        return files.length;
+    }
+
+    public void bytes(File[] files, String url, long CHUNK_SIZE) throws Exception {
+
+        final Observable<File> fileObservable = Observable.fromArray(files);
+        final Observable<File> async = fileObservable.subscribeOn(Schedulers.io());
+        final Disposable subscribe = async.subscribe(f -> bytes(f, url, CHUNK_SIZE));
+
+//        for (int i = 0; i < files.length; i++) {
+//            bytes(files[i], url, CHUNK_SIZE);
+//        }
+    }
+
+    public void bytes(File sourceFile, String url, long CHUNK_SIZE) throws Exception {
+
+        FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
+        long chunks = (long) Math.ceil((double) sourceChannel.size() / (double) CHUNK_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(Math.toIntExact(CHUNK_SIZE));
+
+        for (AtomicLong chunk = new AtomicLong(1); chunk.get() <= chunks; chunk.getAndIncrement()) {
+            buffer.clear();
+            long position = (chunk.get() - 1) * CHUNK_SIZE;
+            byte[] chunkBuffer = getBytes(sourceChannel, buffer, position);
+            go(url, chunkBuffer, chunk.get(), sourceFile.getName() + ".bytes." + chunk.get());
+        }
+        sourceChannel.close();
     }
 
 
