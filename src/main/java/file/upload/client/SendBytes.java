@@ -1,13 +1,5 @@
 package file.upload.client;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -25,23 +17,19 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class SendFiles {
+public class SendBytes {
 
-    private static Logger log = LoggerFactory.getLogger(SendFiles.class);
+    private static Logger log = LoggerFactory.getLogger(SendBytes.class);
 
 
     public static void main(String[] args) throws Exception {
@@ -50,26 +38,32 @@ public class SendFiles {
         String baseName = "2.5G";
         String source_dir = "testdata/";
         String url = "http://localhost:5050/upload";
-        long CHUNK_SIZE = 100 * 1_048_576;
+        long CHUNK_SIZE = 5 * 1_048_576;
 
         FileFilter fileFilter = f -> f.getName().startsWith(baseName);
         File[] files = Paths.get(source_dir).toFile().listFiles(fileFilter);
 
-        SendFiles sf = new SendFiles();
+        SendBytes sf = new SendBytes();
 
         long startAll = System.currentTimeMillis();
 
-        sf.file(files, url, CHUNK_SIZE, "testdata/TEMP/");
+        sf.bytes(files, url, CHUNK_SIZE);
 
         float duration = (System.currentTimeMillis() - startAll) / 1000;
         float throughput = totalSizeInMB / duration;
         log.info("****************");
         log.info("{} files of {} MB processed in {} s at {} MB/s : ", files.length, totalSizeInMB, duration, throughput);
         log.info("****************");
-
     }
 
-    public void file(File[] files, String url, long CHUNK_SIZE, String target_dir) throws Exception {
+    public void bytes(File[] files, String url, long CHUNK_SIZE) throws Exception {
+
+//        final Observable<File> fileObservable = Observable.fromArray(files).subscribeOn(Schedulers.io());
+//        fileObservable
+//                .observeOn(Schedulers.computation())
+//                .doOnNext(f -> bytes(f, url, CHUNK_SIZE))
+//                .subscribe(length -> System.out.println("item length " + length));
+
 
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         Set<Callable<String>> callables = new HashSet<Callable<String>>();
@@ -77,15 +71,13 @@ public class SendFiles {
         for (AtomicInteger file_i = new AtomicInteger(0); file_i.get() < files.length; file_i.getAndIncrement()) {
             final int a = file_i.get();
             log.info("Treating file  n°" + a);
-            callables.add(new Callable<String>() {
-                public String call() {
-                    try {
-                        file(files[a], url, CHUNK_SIZE, "testdata/TEMP/");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return "Done file  n°" + a;
+            callables.add(() -> {
+                try {
+                    bytes(files[a], url, CHUNK_SIZE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                return "Done file  n°" + a;
             });
         }
 
@@ -105,34 +97,45 @@ public class SendFiles {
             ee.printStackTrace();
         }
 
-
-//        for (int i = 0; i < files.length; i++) {
-//            file(files[i], url, CHUNK_SIZE, "testdata/TEMP/");
-//        }
     }
 
-    public void file(File sourceFile, String url, long CHUNK_SIZE, String target_dir) throws Exception {
+    public void bytes(File sourceFile, String url, long CHUNK_SIZE) throws Exception {
 
-        long chunks = (long) Math.ceil((double) sourceFile.length() / (double) CHUNK_SIZE);
+        log.info(sourceFile.getName() );
 
-        for (AtomicInteger chunk = new AtomicInteger(1); chunk.get() <= chunks; chunk.getAndIncrement()) {
-            File targetFile = new File(target_dir + sourceFile.getName() + "." + chunk.get());
-            FileChannel targetChannel = new FileOutputStream(targetFile).getChannel();
+        FileChannel sourceChannel = new FileInputStream(sourceFile).getChannel();
+        long chunks = (long) Math.ceil((double) sourceChannel.size() / (double) CHUNK_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(Math.toIntExact(CHUNK_SIZE));
 
-            SplitChunk.go(new FileInputStream(sourceFile).getChannel(), targetChannel, chunk.get(), CHUNK_SIZE);
-            go(url, targetFile, chunk.get(), sourceFile.getName() + ".file." + chunk.get());
+        for (int chunk = 1; chunk <= chunks; chunk ++) {
+            buffer.clear();
+            long position = (chunk - 1) * CHUNK_SIZE;
+            byte[] chunkBuffer = SendBytes.getBytes(sourceChannel, buffer, position);
+
+            go(url, chunkBuffer, chunk, sourceFile.getName() + ".bytes." + chunk);
         }
+        sourceChannel.close();
+    }
+
+
+    private static byte[] getBytes(FileChannel sourceChannel, ByteBuffer buffer, long position) throws IOException {
+        sourceChannel.position(position);
+        sourceChannel.read(buffer);
+        buffer.flip();
+        byte[] chunkBuffer = new byte[buffer.remaining()];
+        buffer.get(chunkBuffer);
+        return chunkBuffer;
     }
 
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");
     private final OkHttpClient client = new OkHttpClient();
 
 
-    private void go(String url, File file, long chunk, String chunk_name) throws Exception {
+    private boolean go(String url, byte[] bytes, long chunk, String chunk_name) throws Exception {
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("upload_file", chunk_name, RequestBody.create(file, MEDIA_TYPE))
+                .addFormDataPart("upload_file", chunk_name, RequestBody.create(bytes, MEDIA_TYPE))
 //        .addPart(
 //            Headers.of( "Content-Disposition" , "form-data; name=\"title\"" ) ,
 //            RequestBody.create( "FileName" , null )
@@ -150,6 +153,8 @@ public class SendFiles {
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
         response.close();
+        return response.isSuccessful();
 
     }
+
 }

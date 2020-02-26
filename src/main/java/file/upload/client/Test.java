@@ -5,14 +5,25 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws Exception {
 
+        t_ints();
 
-        //t_filelength();
-        t_observables();
+    }
 
+    private static void t_ints() throws Exception {
+        List<Integer> ints = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+        final Observable<List<Integer>> fileObservable = Observable.fromArray(ints);
+        final Observable<List<Integer>> async = fileObservable.subscribeOn(Schedulers.io());
+        async.subscribe(f -> System.out.println(f));
+        fileObservable.subscribe(f -> System.out.println(f));
+
+        fileObservable.doOnNext(f -> System.out.println(":" + f));
     }
 
     private static void t_filelength() throws Exception {
@@ -32,8 +43,11 @@ public class Test {
 
 
         final Observable<String> async = names.subscribeOn(Schedulers.io());
-        async.subscribe(n -> System.out.println(Thread.currentThread().getName() + " : " + n));
+        async
+                .subscribe(n -> System.out.println(Thread.currentThread().getName() + " : " + n));
 
-        names.subscribe(n -> System.out.println(Thread.currentThread().getName() + " : " + n));
+        names
+                .doOnNext(s -> System.out.println(s))
+                .subscribe(n -> System.out.println(Thread.currentThread().getName() + " : " + n));
     }
 }
