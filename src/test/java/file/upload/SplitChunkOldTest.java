@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -17,8 +16,8 @@ class SplitChunkOldTest {
     @Test
     void t_1() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/2M.chunk";
+          String source = "testdata/001.fastq.gz";
+          String target = "testdata/2M.chunk";
             FileChannel sourceChannel = new FileInputStream(source).getChannel();
             FileChannel targetChannel = new FileOutputStream(target).getChannel();
             int chunkSizeInMB = 2;
@@ -39,8 +38,8 @@ class SplitChunkOldTest {
     @Test
     void t_2() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/200M.chunk";
+          String source = "testdata/001.fastq.gz";
+          String target = "testdata/200M.chunk";
             FileChannel sourceChannel = new FileInputStream(source).getChannel();
             FileChannel targetChannel = new FileOutputStream(target).getChannel();
             int chunkSizeInMB = 200;
@@ -59,8 +58,8 @@ class SplitChunkOldTest {
     @Test
     void t_3() {
         try {
-            String source = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/001.fastq.gz";
-            String target = "/Users/julienrevaultdallonnes/DEV/TESTS/GITHUB/FileSplitAndUpload/testdata/160M.chunk";
+          String source = "testdata/001.fastq.gz";
+          String target = "testdata/160M.chunk";
             FileChannel sourceChannel = new FileInputStream(source).getChannel();
             FileChannel targetChannel = new FileOutputStream(target).getChannel();
             int chunkSizeInMB = 200;
